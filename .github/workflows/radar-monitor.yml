@@ -1,0 +1,31 @@
+name: RADAR Monitoring
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Run RADAR monitoring
+        shell: bash
+        env:
+          RADAR_CRON_SECRET: ${{ secrets.RADAR_CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RADAR_CRON_SECRET:-}" ]; then
+            echo "RADAR_CRON_SECRET is not configured"
+            exit 1
+          fi
+
+          curl --fail --show-error --silent \
+            --retry 2 \
+            --retry-delay 15 \
+            --max-time 300 \
+            -X POST \
+            -H "Authorization: Bearer ${RADAR_CRON_SECRET}" \
+            https://radar-web-ulf8.onrender.com/api/cron/monitor
+          echo
