@@ -1,0 +1,2 @@
+import AskRadar from '@/components/AskRadar';
+export default function AskPage(){return <main className="content"><div className="eyebrow">ASK RADAR</div><h1 className="page-title">Research your market in conversation.</h1><p className="sub">Ask over your stored company graph and signal history. When needed, RADAR can also search the current public web and return source links.</p><div className="card" style={{marginTop:20,paddingBottom:12}}><AskRadar/></div></main>}

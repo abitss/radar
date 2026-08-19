@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {getCurrentUser,getWorkspaceForUser} from '@/lib/auth';import {refreshDiscovery} from '@/lib/intelligence';import {rateLimit} from '@/lib/rateLimit';
+export const maxDuration=180;
+export async function POST(){try{const user=await getCurrentUser();if(!user)return NextResponse.json({error:'Unauthorized'},{status:401});await rateLimit(`discover:${user.id}`,{limit:6,windowSeconds:3600});const workspace=await getWorkspaceForUser(user.id);if(!workspace)return NextResponse.json({error:'Workspace missing'},{status:400});const result=await refreshDiscovery(workspace.id);return NextResponse.json({ok:true,...result});}catch(error){return NextResponse.json({error:error.message||'Discovery failed'},{status:500});}}

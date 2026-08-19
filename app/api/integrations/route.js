@@ -1,0 +1,7 @@
+import { NextResponse } from 'next/server';
+import { getCurrentUser,getWorkspaceForUser } from '@/lib/auth';
+import { query } from '@/lib/db';
+import { id } from '@/lib/ids';
+import { seal } from '@/lib/cryptoBox';
+import { assertSafePublicUrl } from '@/lib/security';
+export async function POST(request){try{const user=await getCurrentUser();if(!user)return NextResponse.json({error:'Unauthorized'},{status:401});const workspace=await getWorkspaceForUser(user.id);const b=await request.json();const type=String(b.type||'').toLowerCase();if(!['slack','teams','webhook','whatsapp'].includes(type))return NextResponse.json({error:'Unsupported integration type'},{status:400});let value=String(b.value||'').trim();if(type!=='whatsapp'){const safe=await assertSafePublicUrl(value);if(safe.protocol!=='https:')return NextResponse.json({error:'Webhook URL must use HTTPS'},{status:400});value=safe.toString();}else if(!/^\+?\d{7,18}$/.test(value)){return NextResponse.json({error:'Enter a valid WhatsApp recipient number.'},{status:400});}const label=String(b.label||type).slice(0,80);const integrationId=id('int');await query(`INSERT INTO integrations (id,workspace_id,type,label,secret_value) VALUES ($1,$2,$3,$4,$5) ON CONFLICT(workspace_id,type,label) DO UPDATE SET secret_value=EXCLUDED.secret_value`,[integrationId,workspace.id,type,label,seal(value)]);return NextResponse.json({ok:true});}catch(error){return NextResponse.json({error:error.message},{status:400});}}

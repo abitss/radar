@@ -1,0 +1,4 @@
+'use client';
+import {useState} from 'react';
+const options=[['useful','Useful'],['not_useful','Not useful'],['too_noisy','Too noisy'],['wrong_interpretation','Wrong interpretation'],['wrong_fact','Wrong fact/source']];
+export default function FeedbackButtons({objectId,objectType='signal'}){const [sent,setSent]=useState('');async function send(feedbackType){setSent('…');try{const r=await fetch('/api/feedback',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({objectId,objectType,feedbackType})});if(!r.ok)throw new Error((await r.json()).error);setSent('Saved ✓')}catch{setSent('Failed')}}return <div className="feedback-row">{options.map(([value,label])=><button key={value} className="feedback-button" onClick={()=>send(value)}>{label}</button>)}{sent&&<span className="muted" style={{fontSize:10}}>{sent}</span>}</div>}
