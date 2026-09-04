@@ -1,0 +1,4 @@
+'use client';
+import {useState} from 'react';
+import {useRouter} from 'next/navigation';
+export default function CreateDecisionButton({moveId}){const router=useRouter();const[busy,setBusy]=useState(false);const[error,setError]=useState('');async function run(){setBusy(true);setError('');try{const r=await fetch('/api/decisions',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({moveId})});const d=await r.json();if(!r.ok)throw new Error(d.error||'Could not build decision');router.push('/dashboard/decisions');router.refresh()}catch(e){setError(e.message)}finally{setBusy(false)}}return <span><button className="button" disabled={busy} onClick={run}>{busy?'Analysing options…':'Build decision'}</button>{error&&<span className="error" style={{fontSize:10,marginLeft:8}}>{error}</span>}</span>}
