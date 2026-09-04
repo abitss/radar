@@ -1,4 +1,4 @@
-import './../../../app/ultimate.css';
+import '../ultimate.css';
 import { requireWorkspace } from '@/lib/auth';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
