@@ -1,14 +1,13 @@
 {
   "name": "radar-ultimate",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "engines": {
-    "node": ">=22"
-  },
+  "engines": {"node": ">=22"},
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/start-all.mjs",
+    "start:web": "next start",
     "check": "node scripts/verify.mjs",
     "worker": "node scripts/worker.mjs",
     "monitor:once": "node scripts/monitor-once.mjs",
