@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';
+import {getCurrentUser,getWorkspaceForUser} from '@/lib/auth';
+import {recordOutcome} from '@/lib/decisions';
+export async function POST(request){try{const user=await getCurrentUser();if(!user)return NextResponse.json({error:'Unauthorized'},{status:401});const workspace=await getWorkspaceForUser(user.id);if(!workspace)return NextResponse.json({error:'Workspace missing'},{status:400});const body=await request.json();const outcome=await recordOutcome({workspaceId:workspace.id,decisionId:String(body.decisionId||''),result:body.result,impact:body.impact,assessment:body.assessment,actionId:body.actionId||null});return NextResponse.json({ok:true,outcome});}catch(error){return NextResponse.json({error:error.message||'Could not record outcome'},{status:400});}}
