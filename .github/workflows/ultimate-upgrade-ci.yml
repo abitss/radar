@@ -2,7 +2,7 @@ name: RADAR Ultimate Launch CI
 
 on:
   push:
-    branches: [ultimate-upgrade]
+    branches: [ultimate-upgrade, upgrade/free-ai-failover]
   workflow_dispatch:
 
 permissions:
